@@ -35,11 +35,11 @@ export function html(props) {
         `
     )}
     ${css.reduce((acc, cssPath) => {
-      const styleSheetBuf = fs.readFileSync(
+      const styleSheetStr = fs.readFileSync(
         `${__dirname}/../assets/css/${cssPath}`,
         "utf-8"
       );
-      return `${acc}<style amp-custom>${styleSheetBuf.toString()}</style>`;
+      return `${acc}<style amp-custom>${styleSheetStr}</style>`;
     }, "")}
     </head>
     <body>
