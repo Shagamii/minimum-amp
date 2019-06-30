@@ -1,3 +1,5 @@
+import fs from "fs";
+
 export function html(props) {
   const { body, scripts, css } = props;
   return `
@@ -21,7 +23,6 @@ export function html(props) {
       }
     </script>
     <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
-    </head>
     ${scripts.map(
       scriptEl =>
         `<script ${Object.entries(scriptEl).reduce(
@@ -33,14 +34,17 @@ export function html(props) {
         )}></script>
         `
     )}
-    ${css.reduce(
-      (acc, styleSheet) =>
-        acc + `<link rel="stylesheet" href="/css/${styleSheet}">`,
-      ""
-    )}
+    ${css.reduce((acc, cssPath) => {
+      const styleSheetBuf = fs.readFileSync(
+        `${__dirname}/../assets/css/${cssPath}`,
+        "utf-8"
+      );
+      return `${acc}<style amp-custom>${styleSheetBuf.toString()}</style>`;
+    }, "")}
+    </head>
     <body>
     ${body}
     </body>
     </html>
-`;
+`.trim();
 }
